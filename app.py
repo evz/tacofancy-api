@@ -200,6 +200,10 @@ def random_taco():
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/cook/')
 def cook():
     db.create_all()
