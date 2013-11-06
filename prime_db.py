@@ -43,7 +43,7 @@ MAPPER = {
     'seasonings': Seasoning,
 }
 
-if __name__ == '__main__':
+def preheat():
     index = requests.get('%s/INDEX.md' % base_url)
     soup = BeautifulSoup(md.markdown(index.content))
     links = [a for a in soup.find_all('a') if a.get('href').endswith('.md')]
@@ -68,3 +68,7 @@ if __name__ == '__main__':
             setattr(full_taco, ingredient.__tablename__, ingredient)
             db.session.add(full_taco)
             db.session.commit()
+    return None
+
+if __name__ == '__main__':
+    preheat()

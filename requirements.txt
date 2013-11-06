@@ -3,3 +3,4 @@ Flask==0.10.1
 flask_sqlalchemy
 markdown2
 beautifulsoup4
+gunicorn
