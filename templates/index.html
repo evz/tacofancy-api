@@ -16,13 +16,13 @@
     </head>
     <body>
         <div class="row">
-            <div id="main-content" class="twelve columns">
-                <h3 class="light">Coming Soon:</h3>
-                <h1 class="light">Random Tacos!</h1>
-            </div>
+            <div id="taco-content" class="ten columns centered"></div>
         </div>
-        <script type="application/javascript" src="{{ url_for('static', filename='foundation/javascripts/foundation.min.js') }}"></script>
-        <script type="application/javascript" src="{{ url_for('static', filename='foundation/javascripts/app.js') }}"></script>
+        <script type="application/javascript" src="{{ url_for('static', filename='js/foundation.min.js') }}"></script>
+        <script type="application/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
+        <script type="application/javascript" src="{{ url_for('static', filename='js/ejs_production.js') }}"></script>
+        <script type="application/javascript" src="{{ url_for('static', filename='js/markdown.min.js') }}"></script>
+        <script type="application/javascript" src="{{ url_for('static', filename='js/tacos.js') }}"></script>
         <script>
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -31,7 +31,6 @@
 
           ga('create', 'UA-45472727-1', 'taco-randomizer.herokuapp.com');
           ga('send', 'pageview');
-
         </script>
     </body>
 </html>

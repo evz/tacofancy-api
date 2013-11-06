@@ -1,6 +1,6 @@
-from flask import Flask, make_response, request, render_template
+from flask import Flask, make_response, request, render_template, current_app
+from functools import update_wrapper
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.declarative import DeclarativeMeta
 import json
 import os
 import random
@@ -9,12 +9,15 @@ from os import path
 from urlparse import urlparse
 from bs4 import BeautifulSoup
 import markdown2 as md
+from datetime import timedelta
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 
-base_url = 'https://raw.github.com/sinker/tacofancy/master'
+##################
+##  Data Models ##
+##################
 
 class BaseLayer(db.Model):
     __tablename__ = 'base_layer'
@@ -98,6 +101,19 @@ class FullTaco(db.Model):
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+#############################
+##  Data loading functions ##
+#############################
+
+base_url = 'https://raw.github.com/sinker/tacofancy/master'
+
+MAPPER = {
+    'base_layers': BaseLayer,
+    'condiments': Condiment, 
+    'mixins': Mixin,
+    'seasonings': Seasoning,
+}
+
 def get_cookin(model, links):
     saved = []
     for link in links:
@@ -127,13 +143,6 @@ def get_cookin(model, links):
         saved.append(ingredient)
     return saved
 
-MAPPER = {
-    'base_layers': BaseLayer,
-    'condiments': Condiment, 
-    'mixins': Mixin,
-    'seasonings': Seasoning,
-}
-
 def preheat():
     index = requests.get('%s/INDEX.md' % base_url)
     soup = BeautifulSoup(md.markdown(index.content))
@@ -161,6 +170,10 @@ def preheat():
             db.session.commit()
     return None
 
+########################
+##  Stupid randomizer ##
+########################
+
 def fetch_random(model):
     count = model.query.count()
     if count:
@@ -170,7 +183,57 @@ def fetch_random(model):
     else:
         return None
 
+##############################################
+##  Cross Domain decorator for Flask routes ##
+##############################################
+
+def crossdomain(origin=None, methods=None, headers=None,
+                max_age=21600, attach_to_all=True,
+                automatic_options=True):
+    if methods is not None:
+        methods = ', '.join(sorted(x.upper() for x in methods))
+    if headers is not None and not isinstance(headers, basestring):
+        headers = ', '.join(x.upper() for x in headers)
+    if not isinstance(origin, basestring):
+        origin = ', '.join(origin)
+    if isinstance(max_age, timedelta):
+        max_age = max_age.total_seconds()
+
+    def get_methods():
+        if methods is not None:
+            return methods
+
+        options_resp = current_app.make_default_options_response()
+        return options_resp.headers['allow']
+
+    def decorator(f):
+        def wrapped_function(*args, **kwargs):
+            if automatic_options and request.method == 'OPTIONS':
+                resp = current_app.make_default_options_response()
+            else:
+                resp = make_response(f(*args, **kwargs))
+            if not attach_to_all and request.method != 'OPTIONS':
+                return resp
+
+            h = resp.headers
+
+            h['Access-Control-Allow-Origin'] = origin
+            h['Access-Control-Allow-Methods'] = get_methods()
+            h['Access-Control-Max-Age'] = str(max_age)
+            if headers is not None:
+                h['Access-Control-Allow-Headers'] = headers
+            return resp
+
+        f.provide_automatic_options = False
+        return update_wrapper(wrapped_function, f)
+    return decorator
+
+###################
+##  Flask routes ##
+###################
+
 @app.route('/random/', methods=['GET', 'POST'])
+@crossdomain(origin="*")
 def random_taco():
     full_taco = request.args.get('full-taco')
     taco = {}

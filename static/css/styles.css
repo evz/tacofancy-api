@@ -1,7 +1,31 @@
+ul {
+    list-style-position: inside;
+}
+
 #main-content h1, #main-content h3 {
     text-align: center;
 }
 
 .light {
     font-weight: 300;
+}
+
+.recipe {
+    border-bottom: #bbb 1px solid;
+}
+
+.recipe h1, .recipe h2, .recipe h3 {
+    font-weight: 300;
+}
+
+.recipe h1 {
+    font-size: 32px;
+}
+
+.recipe h2 {
+    font-size: 24px;
+}
+
+.recipe h3 {
+    font-size: 18px;
 }
