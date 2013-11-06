@@ -10,9 +10,15 @@ random full taco recipe, call it thusly:
 
 http://taco-randomizer.herokuapp.com/random/?full-taco=true
 
-### What’s next
+If you’re a human and not a machine, you can get a random recipe by visiting:
 
-Get a client presentation together. 
+http://taco-randomizer.herokuapp.com/
+
+### Use this data
+
+If you’d like to take advantage of the API that was put together for this, I added
+a CORS header to the ``/random/`` path so that you can load it from a javascript app.
+I'm hoping to add more features in the coming weeks so, stay tuned.
 
 ### Want to help?
 
