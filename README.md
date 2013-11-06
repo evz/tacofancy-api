@@ -16,8 +16,7 @@ http://taco-randomizer.herokuapp.com/random/?full-taco=true
 
 ### What’s next
 
-Actually put some routes in the app that generate JSON and make this sucker 
-queryable. 
+Get a client presentation together. 
 
 ### Want to help?
 
