@@ -172,8 +172,6 @@ def fetch_random(model):
 
 @app.route('/random/', methods=['GET', 'POST'])
 def random_taco():
-    condiments = request.args.get('condiments')
-    seasonings = request.args.get('seasonings')
     full_taco = request.args.get('full-taco')
     taco = {}
     if full_taco:
@@ -189,10 +187,8 @@ def random_taco():
         if taco.get('shell_url'):
             taco['shell'] = Shell.query.get(taco['shell_url']).as_dict()
     else:
-        if seasonings:
-            taco['seasoning'] = fetch_random(Seasoning).as_dict()
-        if condiments:
-            taco['condiment'] = fetch_random(Condiment).as_dict()
+        taco['seasoning'] = fetch_random(Seasoning).as_dict()
+        taco['condiment'] = fetch_random(Condiment).as_dict()
         taco['mixin'] = fetch_random(Mixin).as_dict()
         taco['base_layer'] = fetch_random(BaseLayer).as_dict()
         
