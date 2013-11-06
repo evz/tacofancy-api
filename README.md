@@ -5,12 +5,8 @@ Making an API for https://github.com/sinker/tacofancy
 ### Get a random taco
 
 Go here: http://taco-randomizer.herokuapp.com/random/ to get a random Base Layer,
-Mixin and (whenever someone adds some) a Shell. To get condiments or seasonings 
-as well, append them as querystrings:
-
-http://taco-randomizer.herokuapp.com/random/?condiments=true&seasonings=true
-
-To just get a random full taco recipe, call it thusly:
+Mixin, Condiment, Seasoning and (whenever someone adds some) Shell. To just get a 
+random full taco recipe, call it thusly:
 
 http://taco-randomizer.herokuapp.com/random/?full-taco=true
 
