@@ -170,11 +170,11 @@ def fetch_random(model):
     else:
         return None
 
-@app.route('/random/')
+@app.route('/random/', methods=['GET', 'POST'])
 def random_taco():
     condiments = request.args.get('condiments')
     seasonings = request.args.get('seasonings')
-    full_taco = request.args.get('full_taco')
+    full_taco = request.args.get('full-taco')
     taco = {}
     if full_taco:
         taco = fetch_random(FullTaco).as_dict()
@@ -206,6 +206,7 @@ def random_taco():
 
 @app.route('/cook/')
 def cook():
+    db.create_all()
     preheat()
     return make_response('did it')
 

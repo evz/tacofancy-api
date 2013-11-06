@@ -2,9 +2,17 @@
 
 Making an API for https://github.com/sinker/tacofancy
 
-### What I’ve got so far
+### Get a random taco
 
-Got together the relational tables and have the sqlite DB in shape. 
+Go here: http://taco-randomizer.herokuapp.com/random/ to get a random Base Layer,
+Mixin and (whenever someone adds some) a Shell. To get condiments or seasonings 
+as well, append them as querystrings:
+
+http://taco-randomizer.herokuapp.com/random/?condiments=true&seasonings=true
+
+To just get a random full taco recipe, call it thusly:
+
+http://taco-randomizer.herokuapp.com/random/?full-taco=true
 
 ### What’s next
 
