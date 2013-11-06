@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import markdown2 as md
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['TACO_CONN']
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 db = SQLAlchemy(app)
 
 base_url = 'https://raw.github.com/sinker/tacofancy/master'
