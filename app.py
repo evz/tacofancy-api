@@ -1,4 +1,4 @@
-from flask import Flask, make_response, request, render_template, current_app
+from flask import Flask, make_response, request, render_template, current_app, redirect, url_for
 from functools import update_wrapper
 from flask_sqlalchemy import SQLAlchemy
 import json
@@ -10,6 +10,7 @@ from urlparse import urlparse
 from bs4 import BeautifulSoup
 import markdown2 as md
 from datetime import timedelta
+from slughifi import slughifi
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -23,6 +24,7 @@ class BaseLayer(db.Model):
     __tablename__ = 'base_layer'
     url = db.Column(db.String, primary_key=True)
     name = db.Column(db.String)
+    slug = db.Column(db.String)
     recipe = db.Column(db.Text)
 
     def __repr__(self):
@@ -35,6 +37,7 @@ class Condiment(db.Model):
     __tablename__ = 'condiment'
     url = db.Column(db.String, primary_key=True)
     name = db.Column(db.String)
+    slug = db.Column(db.String)
     recipe = db.Column(db.Text)
 
     def __repr__(self):
@@ -47,6 +50,7 @@ class Mixin(db.Model):
     __tablename__ = 'mixin'
     url = db.Column(db.String, primary_key=True)
     name = db.Column(db.String)
+    slug = db.Column(db.String)
     recipe = db.Column(db.Text)
 
     def __repr__(self):
@@ -59,6 +63,7 @@ class Seasoning(db.Model):
     __tablename__ = 'seasoning'
     url = db.Column(db.String, primary_key=True)
     name = db.Column(db.String)
+    slug = db.Column(db.String)
     recipe = db.Column(db.Text)
 
     def __repr__(self):
@@ -71,6 +76,7 @@ class Shell(db.Model):
     __tablename__ = 'shell'
     url = db.Column(db.String, primary_key=True)
     name = db.Column(db.String)
+    slug = db.Column(db.String)
     recipe = db.Column(db.Text)
 
     def __repr__(self):
@@ -83,6 +89,7 @@ class FullTaco(db.Model):
     __tablename__ = 'full_taco'
     url = db.Column(db.String, primary_key=True)
     name = db.Column(db.String)
+    slug = db.Column(db.String)
     recipe = db.Column(db.Text)
     base_layer_url = db.Column(db.String, db.ForeignKey('base_layer.url'))
     base_layer = db.relationship('BaseLayer', backref=db.backref('full_taco', lazy='dynamic'))
@@ -130,6 +137,7 @@ def get_cookin(model, links):
             ingredient_data = {
                 'url': full_url,
                 'name': name,
+                'slug': slughifi(name),
                 'recipe': recipe.content.decode('utf-8'),
             }
             if not ingredient:
@@ -244,17 +252,19 @@ def random_taco():
     full_taco = request.args.get('full-taco')
     taco = {}
     if full_taco:
-        taco = fetch_random(FullTaco).as_dict()
+        taco_obj = fetch_random(FullTaco)
+        taco = taco_obj.as_dict()
         if taco.get('condiment_url'):
-            taco['condiment'] = taco.condiment.as_dict()
+            taco['condiment'] = taco_obj.condiment.as_dict()
         if taco.get('seasoning_url'):
-            taco['seasoning'] = taco.seasoning.as_dict()
+            taco['seasoning'] = taco_obj.seasoning.as_dict()
         if taco.get('base_layer_url'):
-            taco['base_layer'] = taco.base_layer.as_dict()
+            taco['base_layer'] = taco_obj.base_layer.as_dict()
+            taco['base_layer']['slug'] = taco_obj.base_layer.slug
         if taco.get('mixin_url'):
-            taco['mixin'] = taco.mixin.as_dict()
+            taco['mixin'] = taco_obj.mixin.as_dict()
         if taco.get('shell_url'):
-            taco['shell'] = taco.shell.as_dict()
+            taco['shell'] = taco_obj.shell.as_dict()
     else:
         taco['seasoning'] = fetch_random(Seasoning).as_dict()
         taco['condiment'] = fetch_random(Condiment).as_dict()
@@ -272,6 +282,19 @@ def random_taco():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/<path:path>/')
+def permalink(path):
+    try:
+        base_layer, mixin, condiment, seasoning = path.split('/')
+    except ValueError:
+        return redirect(url_for('index'))
+    context = {}
+    context['base_layer'] = BaseLayer.query.filter_by(slug=base_layer).first()
+    context['mixin'] = Mixin.query.filter_by(slug=mixin).first()
+    context['condiment'] = Condiment.query.filter_by(slug=condiment).first()
+    context['seasoning'] = Seasoning.query.filter_by(slug=seasoning).first()
+    return render_template('permalink.html', **context)
 
 @app.route('/cook/', methods=['GET', 'POST'])
 def cook():

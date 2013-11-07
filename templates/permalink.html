@@ -1,0 +1,40 @@
+{% extends "index.html" %}
+{% block content %}
+<h1 class="light">
+  {{base_layer.name}} <strong>with </strong>
+  {{mixin.name}}, <strong>garnished with </strong>
+  {{condiment.name}} <strong>and topped off with </strong>
+  {{seasoning.name}}
+</h1>
+<hr />
+<div class="row">
+    <div class="twelve columns recipe">
+      {{ base_layer.recipe }}
+    </div>
+</div>
+<div class="row">
+    <div class="twelve columns recipe">
+      {{ mixin.recipe }}
+    </div>
+</div>
+<div class="row">
+    <div class="twelve columns recipe">
+      {{ condiment.recipe }}
+    </div>
+</div>
+<div class="row">
+    <div class="twelve columns recipe">
+      {{ seasoning.recipe }}
+    </div>
+</div>
+{% endblock %}
+{% block javascript %}
+    <script type="application/javascript" src="{{ url_for('static', filename='js/markdown.min.js') }}"></script>
+    <script type="application/javascript">
+        $(document).ready(function(){
+            $.each($('.recipe'), function(i, recipe){
+                $(recipe).html(markdown.toHTML($(recipe).text()));
+            })
+        });
+    </script>
+{% endblock %}

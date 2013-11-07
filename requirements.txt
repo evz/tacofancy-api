@@ -5,3 +5,4 @@ markdown2
 beautifulsoup4
 gunicorn
 psycopg2
+alembic
