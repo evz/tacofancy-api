@@ -2,10 +2,6 @@ ul {
     list-style-position: inside;
 }
 
-#main-content h1, #main-content h3 {
-    text-align: center;
-}
-
 .light {
     font-weight: 300;
 }
