@@ -132,7 +132,7 @@ def get_cookin(model, links):
             if name:
                 name = name.text
             else:
-                name = ' '.join(path.basename(urlparse(full_url).path).split('_')).title().replace('.md', '')
+                name = ' '.join(path.basename(urlparse(full_url).path).split('_')).replace('.md', '').title()
             ingredient = db.session.query(model).get(full_url)
             ingredient_data = {
                 'url': full_url,
