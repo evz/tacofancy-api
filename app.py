@@ -119,28 +119,34 @@ def get_cookin(model, links):
     for link in links:
         full_url = '%s/%s' % (base_url, link)
         recipe = requests.get(full_url)
-        soup = BeautifulSoup(md.markdown(recipe.content))
-        name = soup.find('h1')
-        if name:
-            name = name.text
+        if recipe.status_code is 200:
+            soup = BeautifulSoup(md.markdown(recipe.content))
+            name = soup.find('h1')
+            if name:
+                name = name.text
+            else:
+                name = ' '.join(path.basename(urlparse(full_url).path).split('_')).title()
+            ingredient = db.session.query(model).get(full_url)
+            ingredient_data = {
+                'url': full_url,
+                'name': name,
+                'recipe': recipe.content.decode('utf-8'),
+            }
+            if not ingredient:
+                ingredient = model(**ingredient_data)
+                db.session.add(ingredient)
+                db.session.commit()
+            else:
+                for k,v in ingredient_data.items():
+                    setattr(ingredient, k, v)
+                db.session.add(ingredient)
+                db.session.commit()
+            saved.append(ingredient)
         else:
-            name = ' '.join(path.basename(urlparse(full_url).path).split('_')).title()
-        ingredient = db.session.query(model).get(full_url)
-        ingredient_data = {
-            'url': full_url,
-            'name': name,
-            'recipe': recipe.content.decode('utf-8'),
-        }
-        if not ingredient:
-            ingredient = model(**ingredient_data)
-            db.session.add(ingredient)
-            db.session.commit()
-        else:
-            for k,v in ingredient_data.items():
-                setattr(ingredient, k, v)
-            db.session.add(ingredient)
-            db.session.commit()
-        saved.append(ingredient)
+            ingredient = model.query.get(full_url)
+            if ingredient:
+                db.session.delete(ingredient)
+                db.session.commit()
     return saved
 
 def preheat():
