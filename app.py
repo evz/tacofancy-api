@@ -246,15 +246,15 @@ def random_taco():
     if full_taco:
         taco = fetch_random(FullTaco).as_dict()
         if taco.get('condiment_url'):
-            taco['condiment'] = Condiment.query.get(taco['condiment_url']).as_dict()
+            taco['condiment'] = taco.condiment.as_dict()
         if taco.get('seasoning_url'):
-            taco['seasoning'] = Seasoning.query.get(taco['seasoning_url']).as_dict()
+            taco['seasoning'] = taco.seasoning.as_dict()
         if taco.get('base_layer_url'):
-            taco['base_layer'] = BaseLayer.query.get(taco['base_layer_url']).as_dict()
+            taco['base_layer'] = taco.base_layer.as_dict()
         if taco.get('mixin_url'):
-            taco['mixin'] = Mixin.query.get(taco['mixin_url']).as_dict()
+            taco['mixin'] = taco.mixin.as_dict()
         if taco.get('shell_url'):
-            taco['shell'] = Shell.query.get(taco['shell_url']).as_dict()
+            taco['shell'] = taco.shell.as_dict()
     else:
         taco['seasoning'] = fetch_random(Seasoning).as_dict()
         taco['condiment'] = fetch_random(Condiment).as_dict()
@@ -273,7 +273,7 @@ def random_taco():
 def index():
     return render_template('index.html')
 
-@app.route('/cook/')
+@app.route('/cook/', methods=['GET', 'POST'])
 def cook():
     db.create_all()
     preheat()
