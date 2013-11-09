@@ -53,10 +53,7 @@ def add_contributor(data, contributions):
             db.session.add(contributor)
             db.session.commit()
 
-if __name__ == '__main__':
-    import sys
-    repo_name = sys.argv[1]
-    commits_url = 'https://api.github.com/repos/%s/commits' % repo_name
+def load_all(commits_url):
     all_commits = []
     for page in get_all_commits(commits_url):
         all_commits.extend(page)
@@ -78,3 +75,9 @@ if __name__ == '__main__':
             if base not in ignore_these:
                 files.append('%s%s' % (raw_base, f['filename']))
         add_contributor(data, files)
+
+if __name__ == '__main__':
+    import sys
+    repo_name = sys.argv[1]
+    commits_url = 'https://api.github.com/repos/%s/commits' % repo_name
+    load_all(commits_url)

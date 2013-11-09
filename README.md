@@ -22,8 +22,8 @@ Visiting:
 
 ``/random/``
 
-will get you a random Base Layer, Mixin, Condiment, Seasoning and (whenever 
-someone adds some) Shell. To just get a random full taco recipe, call it thusly:
+will get you a random Base Layer, Mixin, Condiment, Seasoning and  Shell. To
+just get a random full taco recipe, call it thusly:
 
 ``/random/?full-taco=true``
 
@@ -56,7 +56,9 @@ So, to get all of [Dan Sinker’s](http://github.com/sinker) contributions, call
 ### Want to help?
 
 This whole this is a relatively rudimentary Flask setup. After you ``pip install``
-the requirements, you should be able to run the ``prime_db.py`` and get a DB
+the requirements, you should be able to visit ``/cook/`` to get a DB
 together. The Flask app is looking for an environmental variable ``TACO_CONN`` to
-tell it how to connect to the database. I developed this with sqlite but it should
-work with anything that SQLAlchemy supports.
+tell it how to connect to the database. Depending on what backend you’re using, you
+might need to actually create the database, etc before it’ll work.
+I developed this with sqlite but you should be able to use any backend that
+SQLAlchemy supports.
