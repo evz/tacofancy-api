@@ -108,6 +108,63 @@ class FullTaco(db.Model):
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
+contrib_fulltaco = db.Table(
+    'contrib_fulltaco',
+    db.Column('contrib_username', db.String, db.ForeignKey('contributor.username')),
+    db.Column('full_taco_url', db.String, db.ForeignKey('full_taco.url')),
+)
+contrib_shell = db.Table(
+    'contrib_shell',
+    db.Column('contrib_username', db.String, db.ForeignKey('contributor.username')),
+    db.Column('shell_url', db.String, db.ForeignKey('shell.url')),
+)
+contrib_seasoning = db.Table(
+    'contrib_seasoning',
+    db.Column('contrib_username', db.String, db.ForeignKey('contributor.username')),
+    db.Column('seasoning_url', db.String, db.ForeignKey('seasoning.url')),
+)
+contrib_mixin = db.Table(
+    'contrib_mixin',
+    db.Column('contrib_username', db.String, db.ForeignKey('contributor.username')),
+    db.Column('mixin_url', db.String, db.ForeignKey('mixin.url')),
+)
+contrib_condiment = db.Table(
+    'contrib_condiment',
+    db.Column('contrib_username', db.String, db.ForeignKey('contributor.username')),
+    db.Column('condiment_url', db.String, db.ForeignKey('condiment.url')),
+)
+contrib_baselayer = db.Table(
+    'contrib_baselayer',
+    db.Column('contrib_username', db.String, db.ForeignKey('contributor.username')),
+    db.Column('baselayer_url', db.String, db.ForeignKey('base_layer.url')),
+)
+
+class Contributor(db.Model):
+    __tablename__ = 'contributor'
+    username = db.Column(db.String, primary_key=True)
+    gravatar = db.Column(db.String)
+    full_name = db.Column(db.String)
+    full_tacos = db.relationship('FullTaco', secondary=contrib_fulltaco,
+        backref=db.backref('contributors', lazy='dynamic'))
+    shells = db.relationship('Shell', secondary=contrib_shell,
+        backref=db.backref('contributors', lazy='dynamic'))
+    seasonings = db.relationship('Seasoning', secondary=contrib_seasoning,
+        backref=db.backref('contributors', lazy='dynamic'))
+    mixins = db.relationship('Mixin', secondary=contrib_mixin,
+        backref=db.backref('contributors', lazy='dynamic'))
+    condiments = db.relationship('Condiment', secondary=contrib_condiment,
+        backref=db.backref('contributors', lazy='dynamic'))
+    base_layers = db.relationship('BaseLayer', secondary=contrib_baselayer,
+        backref=db.backref('contributors', lazy='dynamic'))
+    
+    def __repr__(self):
+        return '<Contributor %r>' % self.username
+    # It seems like it should be possible to call the github commits endpoint
+    # loop over the commits to get the user, then call the specific endpoint 
+    # for each commit to get the files effected (which would give us the recipe)
+    # Should decide on what other data to capture about a user. Maybe just gravatar?
+
+
 #############################
 ##  Data loading functions ##
 #############################
@@ -119,6 +176,7 @@ MAPPER = {
     'condiments': Condiment, 
     'mixins': Mixin,
     'seasonings': Seasoning,
+    'shells': Shell
 }
 
 def get_cookin(model, links):
@@ -179,9 +237,10 @@ def preheat():
             scrubbed_link = '/'.join(parts)
             full_link = '%s/%s' % (base_url, scrubbed_link)
             ingredient = db.session.query(kind).get(full_link)
-            setattr(full_taco, ingredient.__tablename__, ingredient)
-            db.session.add(full_taco)
-            db.session.commit()
+            if ingredient:
+                setattr(full_taco, ingredient.__tablename__, ingredient)
+                db.session.add(full_taco)
+                db.session.commit()
     return None
 
 ########################
