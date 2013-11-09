@@ -217,7 +217,6 @@ def preheat():
     index = requests.get('%s/INDEX.md' % base_url)
     soup = BeautifulSoup(md.markdown(index.content))
     links = [a for a in soup.find_all('a') if a.get('href').endswith('.md')]
-    print links
     full_tacos = [f.get('href') for f in links if 'full_tacos/' in f.get('href')]
     base_layers = [b.get('href') for b in links if 'base_layers/' in b.get('href')]
     mixins = [m.get('href') for m in links if 'mixins/' in m.get('href')]
@@ -243,19 +242,6 @@ def preheat():
                 db.session.add(full_taco)
                 db.session.commit()
     return None
-
-########################
-##  Stupid randomizer ##
-########################
-
-def fetch_random(model):
-    count = model.query.count()
-    if count:
-        index = random.randint(0, count - 1)
-        pk = db.session.query(db.distinct(model.url)).all()[index][0]
-        return model.query.get(pk)
-    else:
-        return None
 
 ##############################################
 ##  Cross Domain decorator for Flask routes ##
@@ -302,11 +288,33 @@ def crossdomain(origin=None, methods=None, headers=None,
         return update_wrapper(wrapped_function, f)
     return decorator
 
+########################
+##  Stupid randomizer ##
+########################
+
+def fetch_random(model):
+    count = model.query.count()
+    if count:
+        index = random.randint(0, count - 1)
+        pk = db.session.query(db.distinct(model.url)).all()[index][0]
+        return model.query.get(pk)
+    else:
+        return None
+
+def fetch_random_ingredients():
+    taco = {}
+    taco['seasoning'] = fetch_random(Seasoning)
+    taco['condiment'] = fetch_random(Condiment)
+    taco['mixin'] = fetch_random(Mixin)
+    taco['base_layer'] = fetch_random(BaseLayer)
+    taco['shell'] = fetch_random(Shell)
+    return taco
+
 ###################
 ##  Flask routes ##
 ###################
 
-@app.route('/random/', methods=['GET', 'POST'])
+@app.route('/random/', methods=['GET'])
 @crossdomain(origin="*")
 def random_taco():
     full_taco = request.args.get('full-taco')
@@ -326,22 +334,19 @@ def random_taco():
         if taco.get('shell_url'):
             taco['shell'] = taco_obj.shell.as_dict()
     else:
-        taco['seasoning'] = fetch_random(Seasoning).as_dict()
-        taco['condiment'] = fetch_random(Condiment).as_dict()
-        taco['mixin'] = fetch_random(Mixin).as_dict()
-        taco['base_layer'] = fetch_random(BaseLayer).as_dict()
-        
-        # Gotta do this junk here cause there's no shells yet. Damn.
-        shell = fetch_random(Shell)
-        if shell:
-            taco['shell'] = shell.as_dict()
+        data = fetch_random_ingredients()
+        taco = {}
+        for k,v in data.items():
+            taco[k] = v.as_dict()
     resp = make_response(json.dumps(taco))
     resp.headers['Content-Type'] = 'application/json'
     return resp
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    taco = fetch_random_ingredients()
+    taco['render_link'] = True
+    return render_template('permalink.html', **taco)
 
 @app.route('/<path:path>/')
 def permalink(path):
@@ -349,13 +354,14 @@ def permalink(path):
         base_layer, mixin, condiment, seasoning, shell = path.split('/')
     except ValueError:
         return redirect(url_for('index'))
-    context = {}
-    context['base_layer'] = BaseLayer.query.filter_by(slug=base_layer).first()
-    context['mixin'] = Mixin.query.filter_by(slug=mixin).first()
-    context['condiment'] = Condiment.query.filter_by(slug=condiment).first()
-    context['seasoning'] = Seasoning.query.filter_by(slug=seasoning).first()
-    context['shell'] = Shell.query.filter_by(slug=shell).first()
-    return render_template('permalink.html', **context)
+    taco = {}
+    taco['base_layer'] = BaseLayer.query.filter_by(slug=base_layer).first()
+    taco['mixin'] = Mixin.query.filter_by(slug=mixin).first()
+    taco['condiment'] = Condiment.query.filter_by(slug=condiment).first()
+    taco['seasoning'] = Seasoning.query.filter_by(slug=seasoning).first()
+    taco['shell'] = Shell.query.filter_by(slug=shell).first()
+    taco['render_link'] = False
+    return render_template('permalink.html', **taco)
 
 @app.route('/contributions/<username>/')
 def contributions(username):

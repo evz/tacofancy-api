@@ -1,0 +1,22 @@
+{% macro render_contributors(contributors) -%}
+<h6 class="light">Contributed by
+    {% for contributor in contributors %}
+        {% if not contributor.gravatar %}
+            {{contributor.full_name}}{% if not loop.last %},{% endif %}
+        {% else %}
+            <a href="https://github.com/{{contributor.username}}" target="_blank">{{contributor.full_name}}</a>{% if not loop.last %},{% endif %}
+        {% endif %}
+    {% endfor %}
+</h6>
+{%- endmacro %}
+
+{% macro render_recipe(ingredient) -%}
+<div class="row">
+    <div class="twelve columns">
+        {{ render_contributors(ingredient.contributors.all()) }}
+        <div class="recipe">
+            {{ ingredient.recipe }}
+        </div>
+    </div>
+</div>
+{%- endmacro %}

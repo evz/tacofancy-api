@@ -1,4 +1,5 @@
-{% extends "index.html" %}
+{% extends "base.html" %}
+{% from 'macros.html' import render_recipe %}
 {% block content %}
 <h1 class="light">
   {{base_layer.name}} <strong>with </strong>
@@ -7,33 +8,17 @@
   {{seasoning.name}} <strong>and wrapped in delicious</strong>
   {{shell.name}}
 </h1>
-<h5 class="light"><a href="/">Get another Taco </a></h5>
+{% if render_link %}
+    <h5 class="light"><a href="/{{base_layer.slug}}/{{mixin.slug}}/{{condiment.slug}}/{{seasoning.slug}}/{{shell.slug}}/">Permalink to this taco</a></h5>
+{% else %}
+    <h5 class="light"><a href="/">Get another Taco</a></h5>
+{% endif %}
 <hr />
-<div class="row">
-    <div class="twelve columns recipe">
-      {{ base_layer.recipe }}
-    </div>
-</div>
-<div class="row">
-    <div class="twelve columns recipe">
-      {{ mixin.recipe }}
-    </div>
-</div>
-<div class="row">
-    <div class="twelve columns recipe">
-      {{ condiment.recipe }}
-    </div>
-</div>
-<div class="row">
-    <div class="twelve columns recipe">
-      {{ seasoning.recipe }}
-    </div>
-</div>
-<div class="row">
-    <div class="twelve columns recipe">
-      {{ shell.recipe }}
-    </div>
-</div>
+{{ render_recipe(base_layer) }}
+{{ render_recipe(mixin) }}
+{{ render_recipe(condiment) }}
+{{ render_recipe(seasoning) }}
+{{ render_recipe(shell) }}
 {% endblock %}
 {% block javascript %}
     <script type="application/javascript" src="{{ url_for('static', filename='js/markdown.min.js') }}"></script>
