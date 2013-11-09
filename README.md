@@ -53,6 +53,10 @@ So, to get all of [Dan Sinker’s](http://github.com/sinker) contributions, call
 
 ``/contributions/sinker/``
 
+To get a listing of all contributors and their usernames, call:
+
+``/contributions/``
+
 ### Want to help?
 
 This whole this is a relatively rudimentary Flask setup. After you ``pip install``

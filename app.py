@@ -374,7 +374,7 @@ def contributor_list():
 def contributions(username):
     cont = Contributor.query.filter_by(username=username).first()
     if not cont:
-        resp = make_response({'error': 'Contributor with github username %s not found' % username}, 404)
+        resp = make_response(json.dumps({'error': 'Contributor with github username %s not found' % username}), 404)
     else:
         data = cont.as_dict()
         data['base_layers'] = [b.name for b in cont.base_layers]
