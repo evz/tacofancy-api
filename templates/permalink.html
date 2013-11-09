@@ -3,8 +3,9 @@
 <h1 class="light">
   {{base_layer.name}} <strong>with </strong>
   {{mixin.name}}, <strong>garnished with </strong>
-  {{condiment.name}} <strong>and topped off with </strong>
-  {{seasoning.name}}
+  {{condiment.name}} <strong>topped off with </strong>
+  {{seasoning.name}} <strong>and wrapped in delicious</strong>
+  {{shell.name}}
 </h1>
 <h5 class="light"><a href="/">Get another Taco </a></h5>
 <hr />
@@ -26,6 +27,11 @@
 <div class="row">
     <div class="twelve columns recipe">
       {{ seasoning.recipe }}
+    </div>
+</div>
+<div class="row">
+    <div class="twelve columns recipe">
+      {{ shell.recipe }}
     </div>
 </div>
 {% endblock %}

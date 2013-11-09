@@ -224,7 +224,7 @@ def preheat():
     mixins = [m.get('href') for m in links if 'mixins/' in m.get('href')]
     condiments = [c.get('href') for c in links if 'condiments/' in c.get('href')]
     seasonings = [s.get('href') for s in links if 'seasonings/' in s.get('href')]
-    shells = [s.get('href') for s in links if 'seasonings/' in s.get('href')]
+    shells = [s.get('href') for s in links if 'shells/' in s.get('href')]
     bases = get_cookin(BaseLayer, base_layers)
     conds = get_cookin(Condiment, condiments)
     seas = get_cookin(Seasoning, seasonings)
@@ -347,7 +347,7 @@ def index():
 @app.route('/<path:path>/')
 def permalink(path):
     try:
-        base_layer, mixin, condiment, seasoning = path.split('/')
+        base_layer, mixin, condiment, seasoning, shell = path.split('/')
     except ValueError:
         return redirect(url_for('index'))
     context = {}
@@ -355,6 +355,7 @@ def permalink(path):
     context['mixin'] = Mixin.query.filter_by(slug=mixin).first()
     context['condiment'] = Condiment.query.filter_by(slug=condiment).first()
     context['seasoning'] = Seasoning.query.filter_by(slug=seasoning).first()
+    context['shell'] = Shell.query.filter_by(slug=shell).first()
     return render_template('permalink.html', **context)
 
 @app.route('/cook/', methods=['GET', 'POST'])
