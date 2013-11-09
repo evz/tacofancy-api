@@ -159,11 +159,9 @@ class Contributor(db.Model):
     
     def __repr__(self):
         return '<Contributor %r>' % self.username
-    # It seems like it should be possible to call the github commits endpoint
-    # loop over the commits to get the user, then call the specific endpoint 
-    # for each commit to get the files effected (which would give us the recipe)
-    # Should decide on what other data to capture about a user. Maybe just gravatar?
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 #############################
 ##  Data loading functions ##
@@ -219,6 +217,7 @@ def preheat():
     index = requests.get('%s/INDEX.md' % base_url)
     soup = BeautifulSoup(md.markdown(index.content))
     links = [a for a in soup.find_all('a') if a.get('href').endswith('.md')]
+    print links
     full_tacos = [f.get('href') for f in links if 'full_tacos/' in f.get('href')]
     base_layers = [b.get('href') for b in links if 'base_layers/' in b.get('href')]
     mixins = [m.get('href') for m in links if 'mixins/' in m.get('href')]
@@ -357,6 +356,31 @@ def permalink(path):
     context['seasoning'] = Seasoning.query.filter_by(slug=seasoning).first()
     context['shell'] = Shell.query.filter_by(slug=shell).first()
     return render_template('permalink.html', **context)
+
+@app.route('/contributions/<username>/')
+def contributions(username):
+    cont = Contributor.query.filter_by(username=username).first()
+    if not cont:
+        resp = make_response({'error': 'Contributor with github username %s not found' % username}, 404)
+    else:
+        data = cont.as_dict()
+        data['base_layers'] = [b.name for b in cont.base_layers]
+        data['condiments'] = [c.name for c in cont.condiments]
+        data['mixins'] = [m.name for m in cont.mixins]
+        data['shells'] = [s.name for s in cont.shells]
+        data['seasonings'] = [s.name for s in cont.seasonings]
+        resp = make_response(json.dumps(data))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/contributors/<recipe_type>/<recipe_slug>/')
+def contributors(recipe_type, recipe_slug):
+    model = MAPPER[recipe_type]
+    recipe = model.query.filter_by(slug=recipe_slug).first()
+    contributors = [c.as_dict() for c in recipe.contributors.all()]
+    resp = make_response(json.dumps(contributors))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
 
 @app.route('/cook/', methods=['GET', 'POST'])
 def cook():
