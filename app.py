@@ -224,10 +224,12 @@ def preheat():
     mixins = [m.get('href') for m in links if 'mixins/' in m.get('href')]
     condiments = [c.get('href') for c in links if 'condiments/' in c.get('href')]
     seasonings = [s.get('href') for s in links if 'seasonings/' in s.get('href')]
+    shells = [s.get('href') for s in links if 'seasonings/' in s.get('href')]
     bases = get_cookin(BaseLayer, base_layers)
     conds = get_cookin(Condiment, condiments)
     seas = get_cookin(Seasoning, seasonings)
     mix = get_cookin(Mixin, mixins)
+    shell = get_cookin(Shell, shells)
     for full_taco in get_cookin(FullTaco, full_tacos):
         soup = BeautifulSoup(md.markdown(full_taco.recipe))
         ingredient_links = [l.get('href') for l in soup.find_all('a') if l.get('href').endswith('.md')]
