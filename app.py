@@ -363,6 +363,13 @@ def permalink(path):
     taco['render_link'] = False
     return render_template('permalink.html', **taco)
 
+@app.route('/contributions/')
+def contributor_list():
+    conts = Contributor.query.all()
+    resp = make_response(json.dumps([c.as_dict() for c in conts]))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
 @app.route('/contributions/<username>/')
 def contributions(username):
     cont = Contributor.query.filter_by(username=username).first()
@@ -376,6 +383,19 @@ def contributions(username):
         data['shells'] = [s.name for s in cont.shells]
         data['seasonings'] = [s.name for s in cont.seasonings]
         resp = make_response(json.dumps(data))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/contributors/<layer_type>/')
+def layer_slugs(layer_type):
+    try:
+        model = MAPPER[layer_type]
+    except KeyError:
+        resp = make_response(json.dumps({'error': 'Invalid layer type: %s' % layer_type}), 404)
+        resp.headers['Content-Type'] = 'application/json'
+        return resp
+    slugs = [{'name': l.name, 'slug': l.slug} for l in model.query.all()]
+    resp = make_response(json.dumps(slugs))
     resp.headers['Content-Type'] = 'application/json'
     return resp
 

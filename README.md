@@ -36,7 +36,12 @@ you can call this endpoint:
 
 So to get the contributors for the Delengua (Beef Tounge) Base Layer, do this:
 
-``/contributors/base_layer/delengua_beef_tongue``
+``/contributors/base_layers/delengua_beef_tongue``
+
+Valid layer types are: ``base_layers``, ``mixins``, ``seasonings``, ``condiments``
+and ``shells``. To get a mapping of slugs for a given recipe type call this:
+
+``/contributors/:recipe_type/``
 
 ##### Contributions
 
