@@ -363,7 +363,91 @@ def permalink(path):
     taco['render_link'] = False
     return render_template('permalink.html', **taco)
 
+def get_all_things(thing):
+    model = MAPPER[thing]
+    things = model.query.all()
+    return json.dumps([t.as_dict() for t in things])
+
+def get_one_thing(thing, slug):
+    model = MAPPER[thing]
+    it = model.query.filter_by(slug=slug).first()
+    if it:
+        return json.dumps(it.as_dict())
+    else:
+        return json.dumps({'status': 'error', 'message': '%s with the slug "%s" not found' % (thing, slug)})
+
+@app.route('/base_layers/')
+@crossdomain(origin="*")
+def base_layers():
+    resp = make_response(get_all_things('base_layers'))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/base_layers/<slug>/')
+@crossdomain(origin="*")
+def base_layer(slug):
+    resp = make_response(get_one_thing('base_layers', slug))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/mixins/')
+@crossdomain(origin="*")
+def mixins():
+    resp = make_response(get_all_things('mixins'))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/mixins/<slug>/')
+@crossdomain(origin="*")
+def mixin(slug):
+    resp = make_response(get_one_thing('mixins', slug))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/condiments/')
+@crossdomain(origin="*")
+def condiments():
+    resp = make_response(get_all_things('condiments'))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/condiments/<slug>/')
+@crossdomain(origin="*")
+def condiment(slug):
+    resp = make_response(get_one_thing('condiments', slug))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/seasonings/')
+@crossdomain(origin="*")
+def seasonings():
+    resp = make_response(get_all_things('seasonings'))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/seasonings/<slug>/')
+@crossdomain(origin="*")
+def seasoning(slug):
+    resp = make_response(get_one_thing('seasonings', slug))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/shells/')
+@crossdomain(origin="*")
+def shells():
+    resp = make_response(get_all_things('shells'))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
+@app.route('/shells/<slug>/')
+@crossdomain(origin="*")
+def shell(slug):
+    resp = make_response(get_one_thing('shells', slug))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
+
 @app.route('/contributions/')
+@crossdomain(origin="*")
 def contributor_list():
     conts = Contributor.query.all()
     resp = make_response(json.dumps([c.as_dict() for c in conts]))
@@ -371,10 +455,11 @@ def contributor_list():
     return resp
 
 @app.route('/contributions/<username>/')
+@crossdomain(origin="*")
 def contributions(username):
     cont = Contributor.query.filter_by(username=username).first()
     if not cont:
-        resp = make_response(json.dumps({'error': 'Contributor with github username %s not found' % username}), 404)
+        resp = make_response(json.dumps({'error': 'Contributor with github username "%s" not found' % username}), 404)
     else:
         data = cont.as_dict()
         data['base_layers'] = [b.name for b in cont.base_layers]
@@ -387,6 +472,7 @@ def contributions(username):
     return resp
 
 @app.route('/contributors/<layer_type>/')
+@crossdomain(origin="*")
 def layer_slugs(layer_type):
     try:
         model = MAPPER[layer_type]
@@ -400,6 +486,7 @@ def layer_slugs(layer_type):
     return resp
 
 @app.route('/contributors/<recipe_type>/<recipe_slug>/')
+@crossdomain(origin="*")
 def contributors(recipe_type, recipe_slug):
     model = MAPPER[recipe_type]
     recipe = model.query.filter_by(slug=recipe_slug).first()
