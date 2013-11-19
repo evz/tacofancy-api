@@ -52,6 +52,7 @@ def add_contributor(data, contributions):
                 setattr(contributor, ing_type, [ingredient])
             db.session.add(contributor)
             db.session.commit()
+    return contributor
 
 def load_all(commits_url):
     all_commits = []
@@ -59,6 +60,8 @@ def load_all(commits_url):
         all_commits.extend(page)
     raw_base = 'https://raw.github.com/%s/master/' % repo_name
     ignore_these = ['LICENSE', '.gitignore', '.DS_Store', 'INDEX.md', 'README.md']
+    conts = []
+    all_files = []
     for commit in all_commits:
         commit_detail = requests.get(commit['url'], headers=headers)
         commit_data = commit_detail.json()
@@ -74,7 +77,9 @@ def load_all(commits_url):
             base = f['filename'].split('/')[-1]
             if base not in ignore_these:
                 files.append('%s%s' % (raw_base, f['filename']))
-        add_contributor(data, files)
+        all_files.extend(files)
+        conts.append(add_contributor(data, files))
+    print 'Updates %s contributors and %s contributions' % (len(conts), len(all_files))
 
 if __name__ == '__main__':
     import sys
