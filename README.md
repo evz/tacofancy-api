@@ -61,8 +61,12 @@ To get a listing of all contributors and their usernames, call:
 
 This whole this is a relatively rudimentary Flask setup. After you ``pip install``
 the requirements, you should be able to visit ``/cook/`` to get a DB
-together. The Flask app is looking for an environmental variable ``TACO_CONN`` to
+together. The Flask app is looking for an environmental variable ``DATABASE_URL`` to
 tell it how to connect to the database. Depending on what backend you’re using, you
 might need to actually create the database, etc before it’ll work.
 I developed this with sqlite but you should be able to use any backend that
-SQLAlchemy supports.
+SQLAlchemy supports. 
+
+You’ll also need to set ``GITHUB_TOKEN`` as an environment variable. This is a
+OAuth Token for the Github API. You can read more about how to get that going
+[here](https://developer.github.com/v3/auth/#basic-authentication)
