@@ -1,2 +1,6 @@
 *.pyc
 .DS_Store
+instance/
+.venv
+__pycache__/
+*.py[cod]
