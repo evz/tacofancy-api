@@ -4,6 +4,4 @@ flask_sqlalchemy
 markdown2
 beautifulsoup4
 gunicorn
-psycopg2
-alembic
 python-slugify
