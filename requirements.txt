@@ -1,7 +1,9 @@
-requests==2.0.1
+requests<2.29
 Flask<2.3
-flask_sqlalchemy
-markdown2
-beautifulsoup4
-gunicorn
-python-slugify
+ariadne<0.20
+flask_sqlalchemy<3.1
+markdown2<2.5
+beautifulsoup4<4.12
+gunicorn<20.2
+python-slugify<8.1
+psycopg2<2.10

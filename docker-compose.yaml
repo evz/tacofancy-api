@@ -1,0 +1,34 @@
+version: '3'
+services:
+  nginx:
+    image: "jonasal/nginx-certbot:4"
+    environment:
+      - CERTBOT_EMAIL=eric@e-vz.com
+    volumes:
+      - static_files:/usr/share/nginx/tacofancy/static:ro
+      - ./conf/nginx.conf:/etc/nginx/user_conf.d/tacofancy.conf:ro
+      - nginx_secrets:/etc/letsencrypt
+      - .:/code
+    ports:
+      - "80:80"
+      - "443:443"
+  web:
+    build: .
+    volumes:
+      - .:/code
+      - static_files:/code/static
+    env_file:
+      - conf/${ENV}.env
+  db:
+    image: "postgres:latest"
+    env_file:
+      - conf/${ENV}.env
+    volumes:
+      - postgresql:/var/lib/postgresql
+      - postgresql_data:/var/lib/postgresql/data
+
+volumes:
+  postgresql:
+  postgresql_data:
+  static_files:
+  nginx_secrets:

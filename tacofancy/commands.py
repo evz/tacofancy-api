@@ -28,8 +28,8 @@ def get_cookin(model, links):
     for link in links:
         full_url = '%s/%s' % (base_url, link)
         recipe = requests.get(full_url)
-        if recipe.status_code is 200:
-            soup = BeautifulSoup(md.markdown(recipe.content))
+        if recipe.status_code == 200:
+            soup = BeautifulSoup(md.markdown(recipe.content), features="html.parser")
             name = soup.find('h1')
             if name:
                 name = name.text
@@ -77,7 +77,7 @@ def preheat():
     mix = get_cookin(Mixin, mixins)
     shell = get_cookin(Shell, shells)
     for full_taco in get_cookin(FullTaco, full_tacos):
-        soup = BeautifulSoup(md.markdown(full_taco.recipe))
+        soup = BeautifulSoup(md.markdown(full_taco.recipe), features="html.parser")
         ingredient_links = [l.get('href') for l in soup.find_all('a') if l.get('href').endswith('.md')]
         for link in ingredient_links:
             parts = urlparse(link).path.split('/')[-2:]

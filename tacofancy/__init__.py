@@ -4,19 +4,42 @@ import click
 
 from flask import Flask
 
+from .routes import routes
 
-def create_app(test_config=None):
+class Config(object):
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
+
+    @staticmethod
+    def init_app(app):
+        pass
+
+
+class DevConfig(Config):
+    DEBUG = True
+
+
+class TestConfig(Config):
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///tacofancy.db"
+
+
+class ProdConfig(Config):
+    pass
+
+
+config_map = {
+    "dev": DevConfig,
+    "test": TestConfig,
+    "prod": ProdConfig,
+}
+
+
+def create_app():
     app = Flask(__name__)
-    app.config.from_mapping(
-        SECRET_KEY="dev",
-        SQLALCHEMY_DATABASE_URI="sqlite:///tacofancy.db"
-    )
-
-    if test_config is None:
-        app.config.from_pyfile("config.py", silent=True)
-    else:
-        app.config.from_mapping(test_config)
-
+    config_name = os.getenv("ENV", "test")
+    app.config.from_object(config_map[config_name])
+    config_map[config_name].init_app(app)
     
     try:
         os.makedirs(app.instance_path)
@@ -30,5 +53,7 @@ def create_app(test_config=None):
     
     from .commands import preheat
     app.cli.add_command(preheat)
+    
+    app.register_blueprint(routes)
 
     return app
