@@ -1,6 +1,6 @@
 import random
 
-from flask import jsonify, Blueprint, request, current_app, redirect, render_template
+from flask import jsonify, Blueprint, request, current_app, redirect, render_template, url_for
 
 from ariadne import graphql_sync
 
@@ -43,7 +43,7 @@ def permalink(path):
     try:
         base_layer, mixin, condiment, seasoning, shell = path.split('/')
     except ValueError:
-        return redirect(url_for('index'))
+        return redirect(url_for('routes.index'))
     taco = {}
     taco['base_layer'] = BaseLayer.query.filter_by(slug=base_layer).first()
     taco['mixin'] = Mixin.query.filter_by(slug=mixin).first()

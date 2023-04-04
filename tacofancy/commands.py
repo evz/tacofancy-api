@@ -63,7 +63,7 @@ def get_cookin(model, links):
 @click.command("preheat")
 def preheat():
     index = requests.get('%s/INDEX.md' % base_url)
-    soup = BeautifulSoup(md.markdown(index.content))
+    soup = BeautifulSoup(md.markdown(index.content), features="html.parser")
     links = [a for a in soup.find_all('a') if a.get('href').endswith('.md')]
     full_tacos = [f.get('href') for f in links if 'full_tacos/' in f.get('href')]
     base_layers = [b.get('href') for b in links if 'base_layers/' in b.get('href')]
