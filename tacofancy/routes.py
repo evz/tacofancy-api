@@ -73,5 +73,4 @@ def graphql_server():
         status_code = 200
     else:
         status_code = 400
-
     return jsonify(result), status_code

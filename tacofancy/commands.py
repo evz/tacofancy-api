@@ -91,3 +91,7 @@ def preheat():
                 db.session.commit()
     return None
 
+
+@click.command("load-contributors")
+def load_contributors():
+    pass

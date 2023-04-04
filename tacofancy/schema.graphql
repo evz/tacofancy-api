@@ -1,0 +1,61 @@
+type Query {
+    base_layers: [BaseLayer!]!
+    base_layer(slug: String!): BaseLayer
+    condiments: [Condiment!]!
+    condiment(slug: String!): Condiment
+    mixins: [Mixin!]!
+    mixin(slug: String!): Mixin
+    seasonings: [Seasoning!]!
+    seasoning(slug: String!): Seasoning
+    shells: [Shell!]!
+    shell(slug: String!): Shell
+    full_tacos: [FullTaco!]!
+    full_taco(slug: String!): FullTaco
+}
+
+type BaseLayer {
+    url: String!
+    name: String!
+    slug: String!
+    recipe: String!
+}
+
+type Condiment {
+    url: String!
+    name: String!
+    slug: String!
+    recipe: String!
+}
+
+type Mixin {
+    url: String!
+    name: String!
+    slug: String!
+    recipe: String!
+}
+
+type Seasoning {
+    url: String!
+    name: String!
+    slug: String!
+    recipe: String!
+}
+
+type Shell {
+    url: String!
+    name: String!
+    slug: String!
+    recipe: String!
+}
+
+type FullTaco {
+    url: String!
+    name: String!
+    slug: String!
+    recipe: String!
+    base_layer: BaseLayer!
+    condiment: Condiment!
+    mixin: Mixin!
+    seasoning: Seasoning!
+    shell: Shell!
+}
