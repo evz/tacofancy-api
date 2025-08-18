@@ -1,2 +1,8 @@
 *.pyc
 .DS_Store
+.env
+__pycache__/
+*.sqlite
+*.db
+.pytest_cache/
+.venv/

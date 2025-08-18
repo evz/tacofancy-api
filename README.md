@@ -1,20 +1,8 @@
 # TacoFancy API
 
-Making an API for https://github.com/sinker/tacofancy
+API for https://github.com/dansinker/tacofancy
 
-### Main endpoint
-
-The main endpoint for the API exists at: 
-
-http://taco-randomizer.herokuapp.com/
-
-Visiting that page will also get you a random taco.
-
-### Use this data
-
-If you’d like to take advantage of the API that was put together for this, I added
-a CORS header to these paths so that you can load them from a javascript app 
-anywhere on the internet.
+## API Endpoints
 
 ##### Random Taco
 
@@ -57,16 +45,28 @@ To get a listing of all contributors and their usernames, call:
 
 ``/contributions/``
 
-### Want to help?
+## Development Setup
 
-This whole this is a relatively rudimentary Flask setup. After you ``pip install``
-the requirements, you should be able to visit ``/cook/`` to get a DB
-together. The Flask app is looking for an environmental variable ``DATABASE_URL`` to
-tell it how to connect to the database. Depending on what backend you’re using, you
-might need to actually create the database, etc before it’ll work.
-I developed this with sqlite but you should be able to use any backend that
-SQLAlchemy supports. 
+### Docker (Recommended)
 
-You’ll also need to set ``GITHUB_TOKEN`` as an environment variable. This is a
-OAuth Token for the Github API. You can read more about how to get that going
-[here](https://developer.github.com/v3/auth/#basic-authentication)
+1. Clone the repository
+2. Copy `.env.example` to `.env` and add your GitHub token
+3. Run: `make up`
+4. Initialize database: `make init-db`
+5. Load data: `make load-data`
+6. API available at `http://localhost:5000/`
+
+### Available Commands
+
+- `make help` - Show all available commands
+- `make up` - Start the application
+- `make down` - Stop the application
+- `make test` - Run tests
+- `make init-db` - Initialize database
+- `make load-data` - Load data from GitHub
+- `make dev` - Run locally (starts database automatically)
+
+### Environment Variables
+
+- `DATABASE_URL` - Database connection string
+- `GITHUB_TOKEN` - GitHub API token for higher rate limits (optional)
