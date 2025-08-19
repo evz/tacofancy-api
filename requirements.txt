@@ -1,13 +1,13 @@
-requests==2.31.0
+requests==2.32.5
 Flask==2.3.3
 Flask-SQLAlchemy==3.0.5
-Flask-CORS==4.0.0
+Flask-CORS==6.0.1
 Flask-Migrate==4.0.5
 Flask-RESTful==0.3.10
 PyGithub==2.1.1
 markdown2==2.4.10
 beautifulsoup4==4.12.2
-gunicorn==21.2.0
+gunicorn==23.0.0
 psycopg2-binary==2.9.7
 alembic==1.12.1
 pytest==7.4.3
