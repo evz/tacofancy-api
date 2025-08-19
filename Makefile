@@ -57,10 +57,10 @@ test: up
 	docker compose exec web flask test
 
 lint:
-	source .venv/bin/activate && flake8 .
-	source .venv/bin/activate && black --check .
-	source .venv/bin/activate && isort --check-only .
+	.venv/bin/flake8 .
+	.venv/bin/black --check .
+	.venv/bin/isort --check-only .
 
 format:
-	source .venv/bin/activate && black .
-	source .venv/bin/activate && isort .
+	.venv/bin/black .
+	.venv/bin/isort .

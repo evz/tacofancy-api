@@ -1,5 +1,8 @@
 # TacoFancy API
 
+[![CI](https://github.com/evz/tacofancy-api/workflows/CI/badge.svg)](https://github.com/evz/tacofancy-api/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 API for https://github.com/dansinker/tacofancy
 
 ## API Endpoints

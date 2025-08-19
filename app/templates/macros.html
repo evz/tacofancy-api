@@ -13,7 +13,7 @@
 {% macro render_recipe(ingredient) -%}
 <div class="row">
     <div class="twelve columns">
-        {{ render_contributors(ingredient.contributors.all()) }}
+        {{ render_contributors(ingredient.contributors) }}
         <div class="recipe">
             {{ ingredient.recipe }}
         </div>

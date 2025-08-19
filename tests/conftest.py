@@ -1,4 +1,5 @@
 import pytest
+
 from app import create_app
 from app.config import TestingConfig
 from app.models import db
@@ -8,7 +9,7 @@ from app.models import db
 def app():
     """Create application for testing."""
     app = create_app(TestingConfig)
-    
+
     with app.app_context():
         db.create_all()
         yield app
@@ -22,12 +23,12 @@ def setup_db(app):
         # Start a nested transaction
         connection = db.engine.connect()
         transaction = connection.begin()
-        
+
         # Configure the session to use the connection
         db.session.configure(bind=connection)
-        
+
         yield
-        
+
         # Rollback the transaction
         transaction.rollback()
         connection.close()
