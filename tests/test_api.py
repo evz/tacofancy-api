@@ -164,7 +164,9 @@ class TestAPI:
 
     def test_permalink_route(self, client, taco_ingredients):
         """Test permalink route with valid ingredients."""
-        response = client.get("/carnitas/diced_onions/salsa_verde/cumin/corn_tortillas/")
+        response = client.get(
+            "/carnitas/diced_onions/salsa_verde/cumin/corn_tortillas/"
+        )
         assert response.status_code == 200
 
     def test_permalink_invalid_path(self, client):

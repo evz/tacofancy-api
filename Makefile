@@ -57,7 +57,8 @@ test: up
 	docker compose exec web flask test
 
 lint:
-	.venv/bin/flake8 .
+	.venv/bin/flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+	.venv/bin/flake8 . --count --exit-zero --max-complexity=15 --max-line-length=88 --statistics
 	.venv/bin/black --check .
 	.venv/bin/isort --check-only .
 
